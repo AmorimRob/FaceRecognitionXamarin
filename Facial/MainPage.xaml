@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="Facial.MainPage"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <StackLayout Margin="10">
+        <Image Source="{Binding Foto}" Margin="10" />
+        <Button Command="{Binding TirarFotoCommand}" Text="Tirar foto" Margin="10"/>
+        <Button Command="{Binding IdentificarEmoçãoCommand}" Text="Identificar emoção" Margin="10"/>
+    </StackLayout>
+</ContentPage>
