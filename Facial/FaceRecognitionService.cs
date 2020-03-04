@@ -10,7 +10,7 @@ namespace Facial
 {
     public class FaceRecognitionService
     {
-        const string subscriptionKey = "";
+        const string subscriptionKey = "62a4893d5345483eb24425d75482a5b9";
         const string uriBase = "https://brazilsouth.api.cognitive.microsoft.com/face/v1.0/detect";
 
         public async Task<List<FaceResponse>> MakeAnalysisRequest(string imageFilePath)

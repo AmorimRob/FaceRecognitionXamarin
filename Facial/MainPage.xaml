@@ -8,6 +8,8 @@
     <StackLayout Margin="10">
         <Image Source="{Binding Foto}" Margin="10" />
         <Button Command="{Binding TirarFotoCommand}" Text="Tirar foto" Margin="10"/>
-        <Button Command="{Binding IdentificarEmoçãoCommand}" Text="Identificar emoção" Margin="10"/>
+        <Button Command="{Binding IdentificarIdadeCommand}" Text="Identificar idade" Margin="10"/>
+        <ActivityIndicator Color="Teal" IsVisible="{Binding BuscandoIdade}" IsRunning="{Binding BuscandoIdade}"/>
+        <Label Text="Confira no telão!" FontSize="Large" Margin="10" TextColor="Teal" IsVisible="{Binding PossuiResultado}"/>
     </StackLayout>
 </ContentPage>

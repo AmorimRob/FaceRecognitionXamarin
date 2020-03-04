@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Input;
+using Microsoft.AspNetCore.SignalR.Client;
 using MvvmHelpers;
 using Plugin.Media;
 using Xamarin.Forms;
@@ -9,8 +10,10 @@ namespace Facial
 {
     public class MainPageViewModel : BaseViewModel
     {
+        HubConnection hubConnection;
+
         public ICommand TirarFotoCommand { get; set; }
-        public ICommand IdentificarEmoçãoCommand { get; set; }
+        public ICommand IdentificarIdadeCommand { get; set; }
 
         ImageSource foto;
         public ImageSource Foto
@@ -19,18 +22,27 @@ namespace Facial
             set => SetProperty(ref foto, value);
         }
 
-        private string Arquivo { get; set; }
-
-        string emoção;
-        public string Emoção
+        bool _possuiResultado;
+        public bool PossuiResultado
         {
-            get => emoção;
-            set => SetProperty(ref emoção, value);
+            get => _possuiResultado;
+            set => SetProperty(ref _possuiResultado, value);
         }
 
+        bool _buscandoIdade;
+        public bool BuscandoIdade
+        {
+            get => _buscandoIdade;
+            set => SetProperty(ref _buscandoIdade, value);
+        }
+
+        private string Arquivo { get; set; }
 
         public MainPageViewModel()
         {
+            BuscandoIdade = false;
+            PossuiResultado = false;
+
             TirarFotoCommand = new Command(async () =>
             {
                 await CrossMedia.Current.Initialize();
@@ -60,12 +72,26 @@ namespace Facial
                 });
             });
 
-            IdentificarEmoçãoCommand = new Command(async () =>
+            IdentificarIdadeCommand = new Command(async () =>
             {
+                BuscandoIdade = true;
+                PossuiResultado = false;
+
+                await hubConnection.StartAsync();
+                await hubConnection.InvokeAsync("EnviarIdade", "Identificando...");
                 var resultado = await new FaceRecognitionService().MakeAnalysisRequest(Arquivo);
-                Emoção = resultado.FirstOrDefault().FaceAttributes.CurrentEmotion();
-               await App.Current.MainPage.DisplayAlert("Emoção da foto", Emoção, "OK");
+                var idade = resultado.FirstOrDefault().FaceAttributes.Idade;
+                await hubConnection.InvokeAsync("EnviarIdade", idade);
+
+                BuscandoIdade = false;
+                PossuiResultado = true;
+
+                await hubConnection.StopAsync();
             });
+
+            hubConnection = new HubConnectionBuilder()
+            .WithUrl($"https://suaidadeserver.azurewebsites.net/faceHub")
+            .Build();
         }
     }
 }
